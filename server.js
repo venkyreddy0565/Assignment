@@ -9,7 +9,8 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB Atlas URI — replace with your actual credentials
-const MONGO_URI = "mongodb+srv://venkyreddy0308:Venkyreddy@cluster0.gqfqswn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const MONGO_URI = process.env.MONGO_URI;
+
 
 // Connect to MongoDB Atlas
 mongoose.connect(MONGO_URI, {
