@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sum Calculator App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      width: 300px;
+      text-align: center;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.6rem;
+      margin: 0.5rem 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.6rem;
+      margin-top: 0.5rem;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #calculator, #history {
+      display: none;
+      margin-top: 1rem;
+    }
+
+    ul {
+      text-align: left;
+      padding-left: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Login / Register</h2>
+    <input type="text" id="username" placeholder="Username" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="login()">Login</button>
+    <button onclick="register()">Register</button>
+
+    <div id="calculator">
+      <hr />
+      <h3>Calculate Sum</h3>
+      <input type="number" id="numberInput" placeholder="Enter number" />
+      <button onclick="calculate()">Calculate</button>
+      <p id="result"></p>
+    </div>
+
+    <div id="history">
+      <hr />
+      <h3>Last 5 Calculations</h3>
+      <ul id="historyList"></ul>
+    </div>
+  </div>
+
+  <script>
+    let loggedInUser = null;
+
+    async function register() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        const res = await fetch("http://localhost:5000/api/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        alert("✅ Registered successfully!");
+      } catch (err) {
+        alert("❌ " + err.message);
+      }
+    }
+
+    async function login() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        const res = await fetch("http://localhost:5000/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        alert("✅ Logged in!");
+        loggedInUser = data.user;
+        document.getElementById("calculator").style.display = "block";
+        document.getElementById("history").style.display = "block";
+        fetchHistory();
+      } catch (err) {
+        alert("❌ " + err.message);
+      }
+    }
+
+    async function calculate() {
+      const number = document.getElementById("numberInput").value;
+
+      try {
+        const res = await fetch("http://localhost:5000/api/calculate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: loggedInUser, number: parseInt(number) }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        document.getElementById("result").textContent = `Sum = ${data.result}`;
+        fetchHistory();
+      } catch (err) {
+        alert("❌ " + err.message);
+      }
+    }
+
+    async function fetchHistory() {
+      try {
+        const res = await fetch(`http://localhost:5000/api/history/${loggedInUser}`);
+        const data = await res.json();
+
+        const list = document.getElementById("historyList");
+        list.innerHTML = "";
+
+        data.forEach(item => {
+          const li = document.createElement("li");
+          li.textContent = `Sum of ${item.number} = ${item.result}`;
+          list.appendChild(li);
+        });
+      } catch (err) {
+        console.error("Failed to load history", err);
+      }
+    }
+  </script>
+</body>
+</html>
