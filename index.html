@@ -88,7 +88,7 @@
       const password = document.getElementById("password").value;
 
       try {
-        const res = await fetch("http://localhost:5000/api/register", {
+        const res = await fetch("https://assignment-317m.onrender.com/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, password }),
@@ -108,7 +108,7 @@
       const password = document.getElementById("password").value;
 
       try {
-        const res = await fetch("http://localhost:5000/api/login", {
+        const res = await fetch("https://assignment-317m.onrender.com/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, password }),
@@ -131,7 +131,7 @@
       const number = document.getElementById("numberInput").value;
 
       try {
-        const res = await fetch("http://localhost:5000/api/calculate", {
+        const res = await fetch("https://assignment-317m.onrender.com/calculate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username: loggedInUser, number: parseInt(number) }),
@@ -149,7 +149,7 @@
 
     async function fetchHistory() {
       try {
-        const res = await fetch(`http://localhost:5000/api/history/${loggedInUser}`);
+        const res = await fetch(`https://assignment-317m.onrender.com/history/${loggedInUser}`);
         const data = await res.json();
 
         const list = document.getElementById("historyList");
