@@ -57,7 +57,7 @@
     <div id="app-section" class="hidden">
       <h2>Calculate Sum</h2>
       <input type="number" id="numberInput" placeholder="Enter number" />
-      <button onclick="calculateSum()">Calculate</button>
+      <button onclick="calculate()">Calculate</button>
       /*<button onclick="logout()" style="background: #dc3545; margin-top: 15px;">Logout</button>*/
       <hr />
       <h3>Last 5 Calculations</h3>
@@ -78,7 +78,7 @@
         return;
       }
 
-      fetch(`${BASE_URL}/api/register`, {
+      fetch(`${BASE_URL}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -98,7 +98,7 @@
         return;
       }
 
-      fetch(`${BASE_URL}/api/login`, {
+      fetch(`${BASE_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -117,7 +117,7 @@
       .catch(() => alert("Login error"));
     }
 
-    function calculateSum() {
+    function calculate() {
       const num = parseInt(document.getElementById("numberInput").value);
 
       if (isNaN(num)) {
@@ -125,7 +125,7 @@
         return;
       }
 
-      fetch(`${BASE_URL}/api/calculate`, {
+      fetch(`${BASE_URL}/calculate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -143,7 +143,7 @@
     }
 
     function loadHistory() {
-      fetch(`${BASE_URL}/api/history`, {
+      fetch(`${BASE_URL}/history`, {
         method: "GET",
         credentials: "include"
       })
