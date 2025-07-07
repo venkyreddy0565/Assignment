@@ -5,8 +5,13 @@ const app = express();
 const PORT = 5000;
 
 // Middleware
-app.use(cors());
 app.use(express.json());
+const allowedOrigins = ['https://unique-bienenstitch-f059d6.netlify.app']; // your Netlify domain
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
 
 // MongoDB Atlas URI — replace with your actual credentials
 const MONGO_URI = process.env.MONGO_URI;
