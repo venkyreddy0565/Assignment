@@ -66,21 +66,19 @@
   <button onclick="login()">Login</button>
   <button onclick="register()">Register</button>
   </div>
-
-<hr />
-
-<div id="app-section" style="display: none;">
-  <h2>Calculate Sum</h2>
-  <input type="number" id="numberInput" placeholder="Enter number" />
-  <button onclick="calculate()">Calculate</button>
-  <p id="result"></p>
-
-  <hr />
-  <h3>Last 5 Calculations</h3>
-  <ul id="historyList"></ul>
-</div>
+  <div id="calculator">
+    <hr />
+    <div id="app-section" style="display: none;">
+    <h2>Calculate Sum</h2>
+    <input type="number" id="numberInput" placeholder="Enter number" />
+    <button onclick="calculate()">Calculate</button>
+    <p id="result"></p>
+    <hr />
+    <h3>Last 5 Calculations</h3>
+    <ul id="historyList"></ul>
+    </div>
   </div>
-
+  </div>
   <script>
     let loggedInUser = null;
 
@@ -129,26 +127,48 @@
 }
 
 
-    async function calculate() {
-      const number = document.getElementById("numberInput").value;
+    async function calculateSum() {
+  const number = document.getElementById("numberInput").value;
 
-      try {
-        const res = await fetch("https://assignment-317m.onrender.com/api/calculate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include", 
-          body: JSON.stringify({ username: loggedInUser, number: parseInt(number) }),
-        });
+  if (!number || isNaN(number)) {
+    alert("Please enter a valid number");
+    return;
+  }
 
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error);
-
-        document.getElementById("result").textContent = `Sum = ${data.result}`;
-        fetchHistory();
-      } catch (err) {
-        alert("❌ " + err.message);
-      }
+  fetch("https://assignment-317m.onrender.com/api/calculate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    credentials: "include",
+    body: JSON.stringify({ number: parseInt(number) })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.result !== undefined) {
+      updateHistory(data.history || []);
+    } else {
+      alert(data.error || "Invalid input");
     }
+  })
+  .catch(error => {
+    console.error("Calculation error:", error);
+    alert("Server error. Try again later.");
+  });
+}
+
+function updateHistory(history) {
+  const list = document.getElementById("historyList");
+  list.innerHTML = "";
+
+  history.forEach(item => {
+    const li = document.createElement("li");
+    li.textContent = `Sum of ${item.number} = ${item.sum}`;
+    list.appendChild(li);
+  });
+}
+
+
 
     async function fetchHistory() {
       try {
