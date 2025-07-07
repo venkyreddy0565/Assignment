@@ -58,7 +58,6 @@
       <h2>Calculate Sum</h2>
       <input type="number" id="numberInput" placeholder="Enter number" />
       <button onclick="calculate()">Calculate</button>
-      /*<button onclick="logout()" style="background: #dc3545; margin-top: 15px;">Logout</button>*/
       <hr />
       <h3>Last 5 Calculations</h3>
       <ul id="calcHistory"></ul>
@@ -69,7 +68,7 @@
     // 🔗 Direct backend URL
     const BASE_URL = "https://assignment-317m.onrender.com/api";
 
-    function register() {
+    async function register() {
       const username = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value.trim();
 
@@ -89,7 +88,7 @@
       .catch(() => alert("Error registering user"));
     }
 
-    function login() {
+    async function login() {
       const username = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value.trim();
 
@@ -117,7 +116,7 @@
       .catch(() => alert("Login error"));
     }
 
-    function calculate() {
+    async function calculate() {
       const num = parseInt(document.getElementById("numberInput").value);
 
       if (isNaN(num)) {
@@ -142,7 +141,7 @@
       .catch(() => alert("Calculation error"));
     }
 
-    function loadHistory() {
+    async function loadHistory() {
       fetch(`${BASE_URL}/history`, {
         method: "GET",
         credentials: "include"
