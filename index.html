@@ -58,6 +58,7 @@
   </style>
 </head>
 <body>
+  <div class="container">
   <div id="auth-section">
   <h2>Login / Register</h2>
   <input type="text" id="username" placeholder="Enter username" />
@@ -77,7 +78,7 @@
   <h3>Last 5 Calculations</h3>
   <ul id="historyList"></ul>
 </div>
-
+  </div>
 
   <script>
     let loggedInUser = null;
@@ -106,7 +107,7 @@
   const username = document.getElementById("username").value;
   const password = document.getElementById("password").value;
 
-  fetch("https://your-backend-url/api/login", {
+  fetch("https://assignment-317m.onrender.com/api/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password })
