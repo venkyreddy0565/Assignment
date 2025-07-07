@@ -84,7 +84,7 @@ app.post("/api/calculate", async (req, res) => {
   try {
     const { username, number } = req.body;
 
-    if (!username || isNaN(number) {
+    if (!username || isNaN(number)) {
       return res.status(400).json({ error: "Invalid input" });
     }
 
