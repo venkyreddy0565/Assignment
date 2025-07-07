@@ -7,185 +7,157 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f3f3f3;
+      background: #f0f0f0;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
+      height: 100vh;
     }
-
     .container {
       background: white;
-      padding: 30px;
+      padding: 2rem;
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
       width: 320px;
     }
-
     h2 {
       text-align: center;
     }
-
     input, button {
       width: 100%;
       padding: 10px;
-      margin: 10px 0;
-      font-size: 16px;
+      margin-top: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
     }
-
     button {
-      background-color: #007bff;
+      background: #007bff;
       color: white;
       border: none;
       cursor: pointer;
     }
-
     button:hover {
-      background-color: #0056b3;
+      background: #0056b3;
     }
-
-    #calculatorSection {
+    .hidden {
       display: none;
-    }
-
-    ul {
-      padding-left: 20px;
     }
   </style>
 </head>
 <body>
+  <div class="container">
+    <div id="auth-section">
+      <h2>Login / Register</h2>
+      <input type="text" id="username" placeholder="Username" />
+      <input type="password" id="password" placeholder="Password" />
+      <button onclick="login()">Login</button>
+      <button onclick="register()">Register</button>
+    </div>
 
-<div class="container">
-  <!-- Auth Section -->
-  <div id="authSection">
-    <h2>Login / Register</h2>
-    <input type="text" id="username" placeholder="Username" />
-    <input type="password" id="password" placeholder="Password" />
-    <button onclick="login()">Login</button>
-    <button onclick="register()">Register</button>
+    <div id="app-section" class="hidden">
+      <h2>Calculate Sum</h2>
+      <input type="number" id="numberInput" placeholder="Enter number" />
+      <button onclick="calculateSum()">Calculate</button>
+      /*<button onclick="logout()" style="background: #dc3545; margin-top: 15px;">Logout</button>*/
+      <hr />
+      <h3>Last 5 Calculations</h3>
+      <ul id="calcHistory"></ul>
+    </div>
   </div>
 
-  <!-- Calculator Section -->
-  <div id="calculatorSection">
-    <h2>Calculate Sum</h2>
-    <input type="number" id="numberInput" placeholder="Enter number" />
-    <button onclick="calculateSum()">Calculate</button>
-    <h3>Last 5 Calculations</h3>
-    <ul id="historyList"></ul>
-    <button onclick="logout()">Logout</button>
-  </div>
-</div>
+  <script>
+    // 🔗 Direct backend URL
+    const BASE_URL = "https://assignment-317m.onrender.com/api";
 
-<script>
-  const BASE_URL = "https://assignment-317m.onrender.com";
+    function register() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
 
-  function register() {
-    const username = document.getElementById("username").value.trim();
-    const password = document.getElementById("password").value.trim();
-
-    if (!username || !password) return alert("Please fill all fields");
-
-    fetch(`${BASE_URL}/api/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ username, password })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.message === "User registered successfully") {
-        alert("Registration successful, now login!");
-      } else {
-        alert(data.error || "Registration failed");
+      if (!username || !password) {
+        alert("Please enter username and password");
+        return;
       }
-    })
-    .catch(err => alert("Error registering user"));
-  }
 
-  function login() {
-    const username = document.getElementById("username").value.trim();
-    const password = document.getElementById("password").value.trim();
-
-    if (!username || !password) return alert("Please fill all fields");
-
-    fetch(`${BASE_URL}/api/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ username, password })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.message === "Login successful") {
-        document.getElementById("authSection").style.display = "none";
-        document.getElementById("calculatorSection").style.display = "block";
-        loadHistory(); // Load history on login
-      } else {
-        alert(data.error || "Login failed");
-      }
-    })
-    .catch(err => alert("Error during login"));
-  }
-
-  function calculateSum() {
-    const number = parseInt(document.getElementById("numberInput").value);
-
-    if (isNaN(number) || number <= 0) {
-      alert("Please enter a valid number greater than 0");
-      return;
+      fetch(`${BASE_URL}/api/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ username, password }),
+      })
+      .then(res => res.json())
+      .then(data => alert(data.message || "Registered successfully"))
+      .catch(() => alert("Error registering user"));
     }
 
-    fetch(`${BASE_URL}/api/calculate`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ number })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.result !== undefined) {
-        loadHistory();
-      } else {
-        alert(data.error || "Invalid input");
+    function login() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      if (!username || !password) {
+        alert("Please enter username and password");
+        return;
       }
-    })
-    .catch(err => {
-      alert("Calculation failed");
-      console.error(err);
-    });
-  }
 
-  function loadHistory() {
-    fetch(`${BASE_URL}/api/history`, {
-      method: "GET",
-      credentials: "include"
-    })
-    .then(res => res.json())
-    .then(data => {
-      const historyList = document.getElementById("historyList");
-      historyList.innerHTML = "";
-      (data.history || []).forEach(entry => {
-        const li = document.createElement("li");
-        li.textContent = `Sum of ${entry.number} = ${entry.sum}`;
-        historyList.appendChild(li);
+      fetch(`${BASE_URL}/api/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ username, password }),
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          document.getElementById("auth-section").classList.add("hidden");
+          document.getElementById("app-section").classList.remove("hidden");
+          loadHistory();
+        } else {
+          alert(data.message || "Login failed");
+        }
+      })
+      .catch(() => alert("Login error"));
+    }
+
+    function calculateSum() {
+      const num = parseInt(document.getElementById("numberInput").value);
+
+      if (isNaN(num)) {
+        alert("Please enter a valid number");
+        return;
+      }
+
+      fetch(`${BASE_URL}/api/calculate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ number: num }),
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.sum !== undefined) {
+          loadHistory();
+        } else {
+          alert(data.message || "Calculation failed");
+        }
+      })
+      .catch(() => alert("Calculation error"));
+    }
+
+    function loadHistory() {
+      fetch(`${BASE_URL}/api/history`, {
+        method: "GET",
+        credentials: "include"
+      })
+      .then(res => res.json())
+      .then(data => {
+        const list = document.getElementById("calcHistory");
+        list.innerHTML = "";
+        data.history.forEach(entry => {
+          const li = document.createElement("li");
+          li.textContent = `Sum of ${entry.number} = ${entry.sum}`;
+          list.appendChild(li);
+        });
       });
-    })
-    .catch(err => console.error("Failed to load history", err));
-  }
-
-  function logout() {
-    fetch(`${BASE_URL}/api/logout`, {
-      method: "POST",
-      credentials: "include"
-    })
-    .then(() => {
-      alert("Logged out successfully");
-      document.getElementById("authSection").style.display = "block";
-      document.getElementById("calculatorSection").style.display = "none";
-    })
-    .catch(err => alert("Logout failed"));
-  }
-</script>
-
+    }
+  </script>
 </body>
 </html>
