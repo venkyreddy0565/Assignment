@@ -72,7 +72,6 @@
   <h2>Calculate Sum</h2>
   <input type="number" id="numberInput" placeholder="Enter number" />
   <button onclick="calculateSum()">Calculate</button>
-  <button onclick="logout()" style="float: right;">Logout</button>
 
   <hr />
   <h3>Last 5 Calculations</h3>
@@ -165,18 +164,6 @@
         console.error("Failed to load history", err);
       }
     }
-    async function logout() {
-  // Clear any session-related data (if using)
-  // Show auth section, hide app section
-    document.getElementById("auth-section").style.display = "block";
-    document.getElementById("app-section").style.display = "none";
-
-  // Optionally clear inputs
-    document.getElementById("username").value = "";
-    document.getElementById("password").value = "";
-    document.getElementById("numberInput").value = "";
-    document.getElementById("historyList").innerHTML = "";
-  }
 
   </script>
 </body>
