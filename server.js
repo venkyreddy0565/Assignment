@@ -5,7 +5,10 @@ const app = express();
 const PORT = 5000;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: "https://unique-bienenstitch-f059d6.netlify.app", // Your deployed frontend
+  credentials: true
+}));
 app.use(express.json());
 
 // MongoDB Atlas URI — replace with your actual credentials
